@@ -20,7 +20,7 @@ class EmployeesListItem extends Component {
         const { is_increased } = this.state;
 
         let classNames = "list-group-item d-flex justify-content-between";
-        classNames += is_increased ? " increase" : "";
+        classNames += is_increased ? " increase like" : "";
         return (
             <li className={classNames}>
                 <span className="list-group-item-label">{name}</span>
