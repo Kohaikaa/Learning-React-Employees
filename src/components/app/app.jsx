@@ -16,7 +16,8 @@ class App extends Component {
                 { id: 1, name: "Vlad K.", salary: 5000, is_increased: false },
                 { id: 2, name: "Milena B.", salary: 800, is_increased: true },
                 { id: 3, name: "Kohai", salary: 7000, is_increased: false }
-            ]
+            ],
+            lastId: 3
         };
     }
 
@@ -25,7 +26,16 @@ class App extends Component {
             return { data: data.filter(elem => elem.id !== id) };
         });
     }
-
+    addItem = (e, item) => {
+        e.preventDefault();
+        this.setState(({ data, lastId }) => {
+            item.id = lastId + 1;
+            item.is_increased = false;
+            const result = data.slice();
+            result.push(item);
+            return { data: result, lastId: lastId + 1 };
+        });
+    }
     render() {
         const { data } = this.state;
         return (
@@ -36,7 +46,7 @@ class App extends Component {
                     <AppFilter />
                 </div>
                 <EmployeesList data={data} onDelete={id => this.deleteItem(id)} />
-                <EmployeesAddForm />
+                <EmployeesAddForm onAdd={(e, item) => this.addItem(e, item)} />
             </div>
         );
     }
