@@ -28,6 +28,10 @@ class App extends Component {
     }
     addItem = (e, item) => {
         e.preventDefault();
+        if ((item.name.trim() === "" || item.name === null) ||
+            (item.salary === null || item.salary.trim() === "")) {
+            return
+        }
         this.setState(({ data, lastId }) => {
             item.id = lastId + 1;
             item.is_increased = false;
