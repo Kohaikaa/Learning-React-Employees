@@ -31,21 +31,39 @@ class App extends Component {
         this.setState(({ data, lastId }) => {
             item.id = lastId + 1;
             item.is_increased = false;
-            const result = data.slice();
-            result.push(item);
-            return { data: result, lastId: lastId + 1 };
+            return {
+                data: [...data, item],
+                lastId: lastId + 1
+            };
         });
     }
+
+    onToggleIncrease = (id) => {
+        this.setState(({ data }) => ({
+            data: data.map(item => {
+                if (item.id === id)
+                    return { ...item, is_increased: !item.is_increased };
+                return item;
+            })
+        }));
+    }
+
     render() {
         const { data } = this.state;
+        const amountOfPrize = data.filter(el => el.is_increased).length;
         return (
             <div className="app" >
-                <AppInfo />
+                <AppInfo
+                    amountOfEmployees={data.length}
+                    amountOfPrize={amountOfPrize} />
                 <div className="search-panel">
                     <SearchPanel />
                     <AppFilter />
                 </div>
-                <EmployeesList data={data} onDelete={id => this.deleteItem(id)} />
+                <EmployeesList
+                    data={data}
+                    onDelete={id => this.deleteItem(id)}
+                    onToggleIncrease={id => this.onToggleIncrease(id)} />
                 <EmployeesAddForm onAdd={(e, item) => this.addItem(e, item)} />
             </div>
         );
