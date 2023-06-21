@@ -27,6 +27,8 @@ class App extends Component {
             return { data: data.filter(elem => elem.id !== id) };
         });
     }
+
+    // #region Methods
     addItem = (e, item) => {
         e.preventDefault();
         if ((item.name.trim() === "" || item.name === null) ||
@@ -43,6 +45,15 @@ class App extends Component {
         });
     }
 
+    searchEmp = (items, term) => {
+        if (term.length === 0) return items;
+        return items.filter(item => {
+            return item.name.toLowerCase().indexOf(term.toLowerCase()) > -1;
+        });
+    }
+    // #endregion
+
+    // #region Events
     onToggleIncrease = (id) => {
         this.setState(({ data }) => ({
             data: data.map(item => {
@@ -53,21 +64,8 @@ class App extends Component {
         }));
     }
 
-    searchEnp = (items, term) => {
-        if (term === 0 || term.trim() === 0) {
-            return items;
-        }
-        return items.filter(item => {
-            return item.name.indexOf(term) > -1;
-        })
-    }
-
-    searchEmp = (items, term) => {
-        if (term.length === 0) return items;
-        return items.filter(item => {
-            return item.name.indexOf(term) > -1;
-        });
-    }
+    onUpdateSearch = (term) => this.setState({ term });
+    // #endregion
 
     render() {
         const { data, term } = this.state;
@@ -79,7 +77,8 @@ class App extends Component {
                     amountOfEmployees={data.length}
                     amountOfPrize={amountOfPrize} />
                 <div className="search-panel">
-                    <SearchPanel />
+                    <SearchPanel
+                        onUpdateSearch={term => this.onUpdateSearch(term)} />
                     <AppFilter />
                 </div>
                 <EmployeesList
