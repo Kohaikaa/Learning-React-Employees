@@ -19,21 +19,22 @@ class App extends Component {
             ],
             lastId: 3,
             term: '',
+            filterCriteria: 'all'
         };
     }
 
+    // #region Methods
     deleteItem = (id) => {
         this.setState(({ data }) => {
             return { data: data.filter(elem => elem.id !== id) };
         });
     }
 
-    // #region Methods
     addItem = (e, item) => {
         e.preventDefault();
         if ((item.name.trim() === "" || item.name === null) ||
             (item.salary === null || item.salary.trim() === "")) {
-            return
+            return;
         }
         this.setState(({ data, lastId }) => {
             item.id = lastId + 1;
@@ -51,6 +52,17 @@ class App extends Component {
             return item.name.toLowerCase().indexOf(term.toLowerCase()) > -1;
         });
     }
+
+    filterEmp = (items, criteria) => {
+        switch (criteria) {
+            case 'rise':
+                return items.filter(item => item.is_increased);
+            case 'salary':
+                return items.filter(item => item.salary > 1_000)
+            default:
+                return this.state.data;
+        }
+    }
     // #endregion
 
     // #region Events
@@ -65,12 +77,16 @@ class App extends Component {
     }
 
     onUpdateSearch = (term) => this.setState({ term });
+    onFilterChanged = (criteria) => this.setState({ filterCriteria: criteria });
     // #endregion
 
     render() {
-        const { data, term } = this.state;
+        const { data, term, filterCriteria } = this.state;
         const amountOfPrize = data.filter(el => el.is_increased).length;
-        const visiableData = this.searchEmp(data, term);
+
+        let visiableData = this.filterEmp(data, filterCriteria);
+        visiableData = this.searchEmp(visiableData, term);
+
         return (
             <div className="app" >
                 <AppInfo
@@ -78,8 +94,10 @@ class App extends Component {
                     amountOfPrize={amountOfPrize} />
                 <div className="search-panel">
                     <SearchPanel
-                        onUpdateSearch={term => this.onUpdateSearch(term)} />
-                    <AppFilter />
+                        onUpdateSearch={this.onUpdateSearch} />
+                    <AppFilter
+                        criteria={filterCriteria}
+                        onFilterChanged={this.onFilterChanged} />
                 </div>
                 <EmployeesList
                     data={visiableData}
