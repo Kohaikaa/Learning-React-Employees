@@ -17,7 +17,8 @@ class App extends Component {
                 { id: 2, name: "Milena B.", salary: 800, is_increased: true },
                 { id: 3, name: "Kohai", salary: 7000, is_increased: false }
             ],
-            lastId: 3
+            lastId: 3,
+            term: '',
         };
     }
 
@@ -52,9 +53,26 @@ class App extends Component {
         }));
     }
 
+    searchEnp = (items, term) => {
+        if (term === 0 || term.trim() === 0) {
+            return items;
+        }
+        return items.filter(item => {
+            return item.name.indexOf(term) > -1;
+        })
+    }
+
+    searchEmp = (items, term) => {
+        if (term.length === 0) return items;
+        return items.filter(item => {
+            return item.name.indexOf(term) > -1;
+        });
+    }
+
     render() {
-        const { data } = this.state;
+        const { data, term } = this.state;
         const amountOfPrize = data.filter(el => el.is_increased).length;
+        const visiableData = this.searchEmp(data, term);
         return (
             <div className="app" >
                 <AppInfo
@@ -65,7 +83,7 @@ class App extends Component {
                     <AppFilter />
                 </div>
                 <EmployeesList
-                    data={data}
+                    data={visiableData}
                     onDelete={id => this.deleteItem(id)}
                     onToggleIncrease={id => this.onToggleIncrease(id)} />
                 <EmployeesAddForm onAdd={(e, item) => this.addItem(e, item)} />
